@@ -1,6 +1,6 @@
 {
   "name": "ampsersand-collection-jquery-datatable",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Renders a ampersand-collections via jQuery DataTables",
   "main": "ampersand-collection-jquery-datatable.js",
   "scripts": {
@@ -19,6 +19,15 @@
     "datatables": "^1.10.5-dev",
     "domready": "^1.0.7",
     "gulp": "^3.8.10",
-    "gulp-browserify": "^0.5.1",
-  }
+    "gulp-browserify": "^0.5.1"
+  },
+  "keywords": [
+    "ampersand",
+    "ampersandjs",
+    "jquery",
+    "datatables",
+    "datatable",
+    "collection"
+  ]
+
 }
