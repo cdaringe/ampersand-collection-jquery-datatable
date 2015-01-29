@@ -1,6 +1,6 @@
 {
   "name": "ampersand-collection-jquery-datatable",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Renders a ampersand-collections via jQuery DataTables",
   "main": "ampersand-collection-jquery-datatable.js",
   "scripts": {

@@ -56,15 +56,16 @@ function CollectionDataTable (options) {
 CollectionDataTable.prototype.setCollection = function(col) {
     var self = this;
     this.collection = col;
-    col.on('change', function(m) {
+    this.collection.on('change', function(m) {
         self.handleCollectionChange(m);
     });
-    col.on('add', function(m) {
+    this.collection.on('add', function(m) {
         self.handleCollectionAdd(m);
     });
-    col.on('remove', function(m) {
+    this.collection.on('remove', function(m) {
         self.handleCollectionRemove(m);
     });
+    return this.collection;
 };
 
 /**
