@@ -4,7 +4,7 @@
 
 * You use [ampersand.js](https://ampersandjs.com/).
 * You use [jQuery DataTables](https://datatables.net/).
-* You have an [ampersand collection](https://github.com/AmpersandJS/ampersand-collection) that you rendered into a dataTable.
+* You have an [ampersand collection](https://github.com/AmpersandJS/ampersand-collection) that you want to render in a DataTable.
 * You want your dataTable to respond to collection events (i.e. `add`, `remove`, `update`), and be displayed immediately, without having to get into the dataTable API on your own.
 
 How refreshing.
