@@ -16,7 +16,10 @@ var jQuery = window.jQuery || require('jquery');
  *     collection: {AmpersandCollection} // ampersand collection,
  *     el: {Element}, // dataTable target
  *     dtOptions: {Object}, // dataTable config.  Set the `data` and `columns` props! *     dtClasses: {String=},  // classes to be applied to the target element/table
- *     noToolbar: {Boolean=}
+ *     noToolbar: {Boolean=},
+ *     renderer: {Function} // delegate a custom function to init the dataTable.
+ *                          // renderer receives `($el, modified-dtOptions)`,
+ *                          // and should return the result of `$el.DataTables(...)
  * }
  * @return {CollectionDataTable}
  */
@@ -41,6 +44,7 @@ function CollectionDataTable (options) {
     this.dtOptions = options.dtOptions;
     this.dtClasses = options.dtClasses;
     this.el = options.el;
+    this.renderer = options.renderer;
     this.$el = jQuery(this.el);
     this.$dt = null; // built by render
     this.render(this.collection);
@@ -117,7 +121,14 @@ CollectionDataTable.prototype.render = function (data) {
     }
     tableOps = _.extend({data: data}, this.dtOptions);
     this.$el.addClass(this.dtClasses);
-    this.$dt = this.$el.DataTable(tableOps);
+    if (!this.renderer) {
+        this.$dt = this.$el.DataTable(tableOps);
+    } else {
+        this.$dt = this.renderer(this.$el, tableOps);
+        if (!this.$dt) {
+            throw new Error('renderer did not provide a DataTable instance');
+        }
+    }
     if (this.noToolbar) {
         this.$el.find('.dataTables_wrapper .ui-toolbar').hide();
     }

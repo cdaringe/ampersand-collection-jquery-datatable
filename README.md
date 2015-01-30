@@ -34,9 +34,11 @@ The process is generally:
  * @param  {options} object {
  *     collection: {AmpersandCollection} // ampersand collection,
  *     el: {Element}, // dataTable target
- *     dtOptions: {Object}, // dataTable config.  Set the `data` and `columns` props!
- *     dtClasses: {String=}, // classes to be applied to the target element/table
- *     noToolbar: {Boolean=}
+ *     dtOptions: {Object}, // dataTable config.  Set the `data` and `columns` props! *     dtClasses: {String=},  // classes to be applied to the target element/table
+ *     noToolbar: {Boolean=},
+ *     renderer: {Function} // delegate a custom function to init the dataTable.
+ *                          // renderer receives `($el, modified-dtOptions)`,
+ *                          // and should return the result of `$el.DataTables(...)
  * }
  * @return {CollectionDataTable}
  */
@@ -100,6 +102,10 @@ domready(function() {
 
 1. Dynamic columns is not yet supported by DataTables (sorry!).  It will likely be in a 10.4/5/X or 11.X release?
 1. `change` updates are *slow* as they delete your row, re-add it, and re-draw.  Know that if you are changing your models often, you may want a mitigation strategy, or to add a debounce to this lib!  The code is simple :).
+
+# Changelog
+
+* 1.1.0 - added `.renderer` option.  some users have pre-defined utilities to pipe table options thru prior to initialization
 
 # ToDo
 
