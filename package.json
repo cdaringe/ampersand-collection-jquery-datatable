@@ -1,7 +1,7 @@
 {
   "name": "ampersand-collection-jquery-datatable",
-  "version": "1.0.4",
-  "description": "Renders a ampersand-collections via jQuery DataTables",
+  "version": "1.0.5",
+  "description": "Renders ampersand-collections via jQuery DataTables",
   "main": "ampersand-collection-jquery-datatable.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
