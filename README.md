@@ -44,6 +44,11 @@ The process is generally:
  */
 ```
 
+## Additional Features
+
+* `.stateNodes` - Access the row DOM node for you state/model by peeking at `yourCollectionTable.stateNodes[yourModel.cid]`
+
+
 # Full Example
 ```js
 var jQuery = window.jQuery = require('jquery'),
@@ -105,6 +110,7 @@ domready(function() {
 
 # Changelog
 
+* 1.1.1 - bugfix & feature.  removing a state would sometimes scrap the full table. improved the indexing by looking up models in table by DOM node via `.stateNodes`
 * 1.1.0 - added `.renderer` option.  some users have pre-defined utilities to pipe table options thru prior to initialization
 
 # ToDo

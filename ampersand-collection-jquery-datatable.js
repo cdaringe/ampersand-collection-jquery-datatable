@@ -41,6 +41,7 @@ function CollectionDataTable (options) {
     }
     this.dtApi = null;
     this.collection = this.setCollection(options.collection);
+    this.stateNodes = {}; // tracks the DOM nodes of the row
     this.dtOptions = options.dtOptions;
     this.dtClasses = options.dtClasses;
     this.el = options.el;
@@ -80,7 +81,7 @@ CollectionDataTable.prototype.setCollection = function(col) {
 CollectionDataTable.prototype.handleCollectionAdd = function(model, options) {
     options = options || {};
     if (!this.$dt) { return this; }
-    this.$dt.row.add(model).draw();
+    this.stateNodes[model.cid] = this.$dt.row.add(model).node();
     if (!options.delayDraw) { this.$dt.draw(); }
     return this;
 };
@@ -96,11 +97,8 @@ CollectionDataTable.prototype.handleCollectionChange = function(model, options) 
 CollectionDataTable.prototype.handleCollectionRemove = function(model, options) {
     options = options || {};
     if (!this.$dt) { return this; }
-    this.$dt
-        .row(function(idx, data, node) {
-            return (data.cid === model.cid) ? true : false;
-        })
-        .remove();
+    this.$dt.row(this.stateNodes[model.cid]).remove();
+    delete this.stateNodes[model.cid];
     if (!options.delayDraw) { this.$dt.draw(); }
     return this;
 };
@@ -113,13 +111,15 @@ CollectionDataTable.prototype.handleCollectionRemove = function(model, options) 
  * @return {this}
  */
 CollectionDataTable.prototype.render = function (data) {
-    var self = this;
-    var tableOps;
+    var self = this,
+        addOps = {delayDraw: true},
+        tableOps,
+        state;
 
     if (data && data.models) {
         data = data.models;
     }
-    tableOps = _.extend({data: data}, this.dtOptions);
+    tableOps = _.extend({}, this.dtOptions);
     this.$el.addClass(this.dtClasses);
     if (!this.renderer) {
         this.$dt = this.$el.DataTable(tableOps);
@@ -129,6 +129,16 @@ CollectionDataTable.prototype.render = function (data) {
             throw new Error('renderer did not provide a DataTable instance');
         }
     }
+
+    // Add all state/models in one-by-one to track their nodes
+    for (var i in data) {
+        if (data.hasOwnProperty(i)) {
+            state = data[i];
+            this.handleCollectionAdd(state, addOps);
+        }
+    }
+    this.$dt.draw();
+
     if (this.noToolbar) {
         this.$el.find('.dataTables_wrapper .ui-toolbar').hide();
     }
