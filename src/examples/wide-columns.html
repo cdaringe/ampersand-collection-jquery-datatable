@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ampersand collection datatables - wide table</title>
+    <style type="text/css" media="screen">
+        #table { 
+            width: 100%
+        }
+        #row {
+            display:flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+            align-content: stretch;
+            align-items: stretch;
+            /* setting width: some-value, yeilds same effect */
+        }
+
+        #cell_table {
+            background: pink;
+            flex-grow: 1;
+            flex-shrink: 0;
+            flex-basis: 400px;
+        }
+
+        #cell_pane {
+            background: green;
+            width: 400px;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/responsive/1.0.3/css/dataTables.responsive.css">
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.4/css/jquery.dataTables.min.css">
+    <script src="../../dist/examples/wide-table.js"></script>
+    <script src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/responsive/1.0.3/js/dataTables.responsive.js"></script>
+</head>
+<body>
+    <button data-hook="show-pane" type="button">Show Pane</button>
+    <button data-hook="hide-pane" type="button">Hide Pane</button>
+    <div id="table">
+        <div id="row">
+            <div id="cell_table">
+                <table id="myTable" class="display responsive no-wrap"></table>
+            </div>
+            <div id="cell_pane">
+                PANE IS HERE!
+            </div>
+        </div>
+    </div>
+</body>
+</html>

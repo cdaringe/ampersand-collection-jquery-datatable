@@ -14,12 +14,13 @@ var jQuery = window.jQuery || require('jquery');
  * Constructor
  * @param  {options} object {
  *     collection: {AmpersandCollection} // ampersand collection,
- *     el: {Element}, // dataTable target
- *     dtOptions: {Object}, // dataTable config.  Set the `data` and `columns` props! *     dtClasses: {String=},  // classes to be applied to the target element/table
- *     noToolbar: {Boolean=},
- *     renderer: {Function} // delegate a custom function to init the dataTable.
- *                          // renderer receives `($el, modified-dtOptions)`,
- *                          // and should return the result of `$el.DataTables(...)
+ *     el: {Element},           // dataTable target
+ *     dtOptions: {Object},     // dataTable config.  Set the `data` and `columns` props!
+ *     dtClasses: {String=},    // class(es) to be applied to the target element/table
+ *     noToolbar: {Boolean=},   // hide the datatable toolbar
+ *     renderer:  {Function=}   // delegate a custom function to init the dataTable.
+ *                              // renderer receives `($el, modified-dtOptions)`,
+ *                              // and should return the result of `$el.DataTables(...)
  * }
  * @return {CollectionDataTable}
  */

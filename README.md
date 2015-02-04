@@ -16,7 +16,7 @@ How refreshing.
 * You should already have the DataTables plugin loaded onto jQuery
 
 ## Process
-Feel free to take a peek at the `src/examples/dynamic-rows.js` && `sandbox/dynamic-rows.html` files.
+Feel free to take a peek at the `src/examples/dynamic-rows.js` && `src/examples/dynamic-rows.html` files.
 
 The process is generally:
 
@@ -110,6 +110,7 @@ domready(function() {
 
 # Changelog
 
+* 1.1.2 - doc updates only
 * 1.1.1 - bugfix & feature.  removing a state would sometimes scrap the full table. improved the indexing by looking up models in table by DOM node via `.stateNodes`
 * 1.1.0 - added `.renderer` option.  some users have pre-defined utilities to pipe table options thru prior to initialization
 
