@@ -114,13 +114,22 @@ CollectionDataTable.prototype.handleCollectionRemove = function(model, options) 
 CollectionDataTable.prototype.render = function (data) {
     var self = this,
         addOps = {delayDraw: true},
+        initCompleteDelayed, initCompleteArgs,
         tableOps,
         state;
 
     if (data && data.models) {
         data = data.models;
     }
+
+    // Stage initComplete, and execute it post individual row adds
+    if (!this.initCompleteFired && this.dtOptions.initComplete) {
+        initCompleteDelayed = this.dtOptions.initComplete;
+    }
+
     tableOps = _.extend({}, this.dtOptions);
+    tableOps.initComplete = function captureInitCompleteArgs() { initCompleteArgs = _.toArray(arguments); };
+
     this.$el.addClass(this.dtClasses);
     if (!this.renderer) {
         this.$dt = this.$el.DataTable(tableOps);
@@ -139,6 +148,12 @@ CollectionDataTable.prototype.render = function (data) {
         }
     }
     this.$dt.draw();
+
+    // Execute initComplete, mimicking native functionality
+    if (this.dtOptions.initComplete) {
+        this.this.initCompleteFired = true;
+        initCompleteDelayed.apply(this.$dt, initCompleteArgs);
+    }
 
     if (this.noToolbar) {
         this.$el.find('.dataTables_wrapper .ui-toolbar').hide();
