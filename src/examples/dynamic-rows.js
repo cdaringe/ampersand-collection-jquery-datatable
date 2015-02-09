@@ -23,9 +23,13 @@ domready(function() {
         collection: dummyCollection,
         el: $myDt[0],
         dtOptions: {
+            columns: colDefs,
             data: dummyData,
-            columns: colDefs
-        }
+            initComplete: function() {
+                var numNodes = this.api().column(1).nodes().length;
+                console.log("yea buddy! initComplete! // " + numNodes + " in table");
+            }
+        },
     });
 
     // Test add/remove/update
@@ -38,9 +42,8 @@ domready(function() {
     dummyCollection.remove(removeObj); // dataTable responds, removes row!
 
     // change
-    dummyCollection
-        .add({a: 'needs-to-be-updated', b: 'needs-to-be-updated'});
-    var toChange = dummyCollection.get('nees-to-be-updated', 'a');
+    dummyCollection.add({a: 'needs-to-be-updated', b: 'needs-to-be-updated'});
+    var toChange = dummyCollection.get('needs-to-be-updated', 'a');
     toChange.a = 'updated-successfully';
     toChange.b = 'updated-successfully';
     // dataTable responds, deletes old row, adds row with new data back in

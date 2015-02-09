@@ -40,7 +40,6 @@ function CollectionDataTable (options) {
         // permit user to override default jquery with their own
         jQuery = options.jquery;
     }
-    this.dtApi = null;
     this.collection = this.setCollection(options.collection);
     this.stateNodes = {}; // tracks the DOM nodes of the row
     this.dtOptions = options.dtOptions;
@@ -48,7 +47,8 @@ function CollectionDataTable (options) {
     this.el = options.el;
     this.renderer = options.renderer;
     this.$el = jQuery(this.el);
-    this.$dt = null; // built by render
+    this.$dt = null;
+    this.$api = null; // built by render
     this.render(this.collection);
 }
 
@@ -81,15 +81,15 @@ CollectionDataTable.prototype.setCollection = function(col) {
  */
 CollectionDataTable.prototype.handleCollectionAdd = function(model, options) {
     options = options || {};
-    if (!this.$dt) { return this; }
-    this.stateNodes[model.cid] = this.$dt.row.add(model).node();
-    if (!options.delayDraw) { this.$dt.draw(); }
+    if (!this.$api) { return this; }
+    this.stateNodes[model.cid] = this.$api.row.add(model).node();
+    if (!options.delayDraw) { this.$api.draw(); }
     return this;
 };
 
 CollectionDataTable.prototype.handleCollectionChange = function(model, options) {
     options = options || {};
-    if (!this.$dt) { return this; }
+    if (!this.$api) { return this; }
     this.handleCollectionRemove(model, {delayDraw: true});
     this.handleCollectionAdd(model, options);
     return this;
@@ -97,10 +97,10 @@ CollectionDataTable.prototype.handleCollectionChange = function(model, options) 
 
 CollectionDataTable.prototype.handleCollectionRemove = function(model, options) {
     options = options || {};
-    if (!this.$dt) { return this; }
-    this.$dt.row(this.stateNodes[model.cid]).remove();
+    if (!this.$api) { return this; }
+    this.$api.row(this.stateNodes[model.cid]).remove();
     delete this.stateNodes[model.cid];
-    if (!options.delayDraw) { this.$dt.draw(); }
+    if (!options.delayDraw) { this.$api.draw(); }
     return this;
 };
 
@@ -132,13 +132,14 @@ CollectionDataTable.prototype.render = function (data) {
 
     this.$el.addClass(this.dtClasses);
     if (!this.renderer) {
-        this.$dt = this.$el.DataTable(tableOps);
+        this.$api = this.$el.DataTable(tableOps);
     } else {
-        this.$dt = this.renderer(this.$el, tableOps);
-        if (!this.$dt) {
+        this.$api = this.renderer(this.$el, tableOps);
+        if (!this.$api) {
             throw new Error('renderer did not provide a DataTable instance');
         }
     }
+    this.$dt = this.$el.dataTable();
 
     // Add all state/models in one-by-one to track their nodes
     for (var i in data) {
@@ -147,11 +148,11 @@ CollectionDataTable.prototype.render = function (data) {
             this.handleCollectionAdd(state, addOps);
         }
     }
-    this.$dt.draw();
+    this.$api.draw();
 
     // Execute initComplete, mimicking native functionality
     if (this.dtOptions.initComplete) {
-        this.this.initCompleteFired = true;
+        this.initCompleteFired = true;
         initCompleteDelayed.apply(this.$dt, initCompleteArgs);
     }
 

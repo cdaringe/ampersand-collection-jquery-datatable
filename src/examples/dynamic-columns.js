@@ -34,10 +34,11 @@ domready(function() {
         columns: colDefs
     });
 
-        colDefs.push({title: 'd', data: 'd'});
-        $myDt.DataTable().destroy();
-        $myDt.dataTable({
-            data: dummyData,
-            columns: colDefs
-        });
+    colDefs.push({title: 'd', data: 'd'});
+    $myDt.DataTable().destroy();
+    $myDt.dataTable({
+        data: dummyData,
+        columns: colDefs,
+        initComplete: console.log('dont show me until aftwards !!')
+    });
 });

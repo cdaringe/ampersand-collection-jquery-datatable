@@ -13,3 +13,5 @@ gulp.task('browserify', function() {
         .pipe(browserify({}))
         .pipe(gulp.dest('dist/examples'));
 });
+
+gulp.task('default', ['browserify']);
