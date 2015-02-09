@@ -91,8 +91,11 @@ CollectionDataTable.prototype.handleCollectionAdd = function(model, options) {
 CollectionDataTable.prototype.handleCollectionChange = function(model, options) {
     options = options || {};
     if (!this.$api) { return this; }
-    this.handleCollectionRemove(model, {delayDraw: true});
-    this.handleCollectionAdd(model, options);
+    this.$api
+        .row(this.stateNodes[model.cid])
+        .data(model)
+        .draw(); // I don't need to explicity call draw for my cases,
+                 // however, the docs say otherwise
     return this;
 };
 

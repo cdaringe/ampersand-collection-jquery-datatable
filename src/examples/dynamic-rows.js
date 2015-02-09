@@ -6,7 +6,7 @@ var jQuery = window.jQuery = require('jquery'),
     datatables= require('datatables'),
     domready = require('domready');
 
-var colDefs = [{title: 'a', data: 'a'}, {title: 'b', data: 'b'}];
+var colDefs = [{title: 'a', data: 'a'}, {title: 'b', name: 'b', data: 'b'}];
 var dummyData = [
     new TestModel({a: 'a1', b: 'b1'}),
     new TestModel({a: 'a2', b: 'b2'})
@@ -25,6 +25,14 @@ domready(function() {
         dtOptions: {
             columns: colDefs,
             data: dummyData,
+            createdRow: function(row, data, ndx) {
+                var api = this.api();
+                var cell = api.cell({
+                    row: ndx,
+                    column: api.column('b:name').index()
+                });
+                console.dir(cell.data());
+            },
             initComplete: function() {
                 var numNodes = this.api().column(1).nodes().length;
                 console.log("yea buddy! initComplete! // " + numNodes + " in table");
