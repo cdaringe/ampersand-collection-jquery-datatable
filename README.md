@@ -110,7 +110,7 @@ domready(function() {
 1. If you are changing your models often or in bulk, you may want a mitigation strategy as it attempts to redraw on every add/delete, with some minor exceptions.
 
 # Changelog
-
+* 1.2.3 - add missing repo field
 * 1.2.2 - Carry applied `classes` from old `tr` to new `tr` onchange.  Additional attrs may need consideration as well
 * 1.2.1 - Drastically improve `change` on the collection--rows are no longer deleted and re-added.  Instead, the `.data()` setter is used, even if the data pointer is the same as the original, which triggers a view update on that row.
 * 1.2.0 - `initComplete` handling update.  initComplete must be called after the table is instantiated due to the way that the table data is populated in ACJD.  Additionally, `.$dt` now points to the actual DT instance, and `.$api` points to a `.$dt.api()`.

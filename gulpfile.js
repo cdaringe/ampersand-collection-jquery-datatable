@@ -12,6 +12,9 @@ gulp.task('browserify', function() {
     gulp.src('src/examples/dynamic-rows.js')
         .pipe(browserify({}))
         .pipe(gulp.dest('dist/examples'));
+    gulp.src('src/examples/state-collection-table.js')
+        .pipe(browserify({}))
+        .pipe(gulp.dest('dist/examples'));
 });
 
 gulp.task('default', ['browserify']);

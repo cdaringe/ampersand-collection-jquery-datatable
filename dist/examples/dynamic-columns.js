@@ -91,11 +91,17 @@ CollectionDataTable.prototype.handleCollectionAdd = function(model, options) {
 CollectionDataTable.prototype.handleCollectionChange = function(model, options) {
     options = options || {};
     if (!this.$api) { return this; }
+    var node = this.stateNodes[model.cid];
+    var $node = jQuery(node);
+    var priorClasses = $node.attr("class");
     this.$api
-        .row(this.stateNodes[model.cid])
-        .data(model)
-        .draw(); // I don't need to explicity call draw for my cases,
+        .row(node)
+        .data(model);
+        //.draw(); // I don't need to explicity call draw for my cases,
                  // however, the docs say otherwise
+    this.$el.one('draw.dt', function () {
+        $node.attr("class", priorClasses);
+    });
     return this;
 };
 

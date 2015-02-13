@@ -30857,26 +30857,27 @@ module.exports=require(29)
 },{}],36:[function(require,module,exports){
 var jQuery = window.jQuery = require('jquery'),
     Collection = require('ampersand-collection'),
-    Model = require('ampersand-model'),
-    TestModel = Model.extend({ props: {a: 'string', b: 'string'} }),
+    State = require('ampersand-model'),
+    TestState = State.extend({ props: {a: 'string', b: 'string'} }),
     CollectionTable = require('../../ampersand-collection-jquery-datatable'),
     datatables= require('datatables'),
     domready = require('domready');
 
 var colDefs = [{title: 'a', data: 'a'}, {title: 'b', name: 'b', data: 'b'}];
 var dummyData = [
-    new TestModel({a: 'a1', b: 'b1'}),
-    new TestModel({a: 'a2', b: 'b2'})
+    new TestState({a: 'a1', b: 'b1'}),
+    new TestState({a: 'a2', b: 'b2'})
 ];
 
 domready(function() {
+    console.log('state-collection-table');
     var $myDt = jQuery('#myTable');
     var TestCollection = Collection.extend({
         indexes: ['a', 'b'],
-        model: TestModel
+        model: TestState
     });
     var dummyCollection = new TestCollection();
-    var acjd = new CollectionTable({
+    var acjd = window.acjd = new CollectionTable({
         collection: dummyCollection,
         el: $myDt[0],
         dtOptions: {
@@ -30898,11 +30899,11 @@ domready(function() {
     });
 
     // Test add/remove/update
-    var newObj = new TestModel({a: 'new', b: 'new'});
+    var newObj = new TestState({a: 'new', b: 'new'});
     dummyCollection.add(newObj);  // dataTable responds, adds row!
 
     // remove obj
-    var removeObj = new TestModel({a: 'REMOVE', b: 'REMOVE'});
+    var removeObj = new TestState({a: 'REMOVE', b: 'REMOVE'});
     dummyCollection.add(removeObj);
     dummyCollection.remove(removeObj); // dataTable responds, removes row!
 
