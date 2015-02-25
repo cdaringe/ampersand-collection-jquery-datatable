@@ -36,13 +36,19 @@ The process is generally:
 /**
  * Constructor
  * @param  {options} object {
- *     collection: {AmpersandCollection} // ampersand collection,
- *     el: {Element}, // dataTable target
- *     dtOptions: {Object}, // dataTable config.  Set the `data` and `columns` props! *     dtClasses: {String=},  // classes to be applied to the target element/table
- *     noToolbar: {Boolean=},
- *     renderer: {Function} // delegate a custom function to init the dataTable.
- *                          // renderer receives `($el, modified-dtOptions)`,
- *                          // and should return the result of `$el.DataTables(...)
+ *     collection: {AmpersandCollection}, // assumes `rows`, OR use...
+ *     collections: {
+ *         rows: {AmpersandCollection|Array},
+ *         cols: {AmpersandCollection|Array}  // overrides dtOptions.columns. Contained
+ *                                            // states should have .title, and likely a .data & .id
+ *     }
+ *     el: {Element},           // dataTable target
+ *     dtOptions: {Object},     // dataTable config.  Set the `data` (rows) and `columns` props as reqd
+ *     dtClasses: {String=},    // class(es) to be applied to the target element/table
+ *     noToolbar: {Boolean=},   // hide the datatable toolbar
+ *     renderer:  {Function=}   // delegate a custom function to init the dataTable.
+ *                              // renderer receives `($el, modified-dtOptions)`,
+ *                              // and should return the result of `$el.DataTables(...)
  * }
  * @return {CollectionDataTable}
  */
