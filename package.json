@@ -22,7 +22,6 @@
     "browserify": "*",
     "datatables": "1.10.5",
     "domready": "^1.0.7",
-    "gulp": "^3.8.10",
     "jquery": "*",
     "js-beautify": "^1.5.4",
     "phantomjs": "*",
