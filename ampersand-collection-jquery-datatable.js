@@ -1,3 +1,4 @@
+// ampersand-collection-jquery-datatable.js
 /**
  * Permits the execution of normal ampersand collection operations to act onto
  * a jquery dataTable vs. a standard view
@@ -7,15 +8,18 @@
 "use strict";
 
 var _ = require('underscore');
-
-var jQuery = window.jQuery || require('jquery');
-
+var jQuery = window.jQuery;
 /**
  * Constructor
  * @param  {options} object {
- *     collection: {AmpersandCollection} // ampersand collection,
+ *     collection: {AmpersandCollection}, // assumes `rows`, OR use...
+ *     collections: {
+ *         rows: {AmpersandCollection|Array},
+ *         cols: {AmpersandCollection|Array}  // overrides dtOptions.columns. Contained
+ *                                            // states should have .title, and likely a .data & .id
+ *     }
  *     el: {Element},           // dataTable target
- *     dtOptions: {Object},     // dataTable config.  Set the `data` and `columns` props!
+ *     dtOptions: {Object},     // dataTable config.  Set the `data` (rows) and `columns` props as reqd
  *     dtClasses: {String=},    // class(es) to be applied to the target element/table
  *     noToolbar: {Boolean=},   // hide the datatable toolbar
  *     renderer:  {Function=}   // delegate a custom function to init the dataTable.
@@ -29,49 +33,130 @@ function CollectionDataTable (options) {
     if (!options || !_.isObject(options)) {
         throw new TypeError("Expected options object, received " + options);
     }
-    if (!options.collection || !options.collection.isCollection) {
-        throw new TypeError("Expected AmpersandCollection, received " + options.collection);
-    }
-    if (!options.el) {
-        throw new TypeError("Expected element to bind jquery dataTable to, received: " + options.el);
-    }
+    options.dtOptions = options.dtOptions || {};
 
     if (options.jquery) {
         // permit user to override default jquery with their own
         jQuery = options.jquery;
     }
-    this.collection = this.setCollection(options.collection);
-    this.stateNodes = {}; // tracks the DOM nodes of the row
+    this.setEl(options.el);
+
+    if (!options.collection && !options.collections) {
+        throw new TypeError("Expected collection or collections property");
+    }
+    if (options.collection) {
+        if (!options.collection.isCollection) {
+            throw new TypeError("Expected AmpersandCollection, received " + options.collection);
+        }
+        this.rowCollection = this.setRowCollection(options.collection);
+    }
+
+    if (options.collections) { this.initCollections(options.collections); }
+
+    if (!options.dtOptions.data && !this.rowCollection && !this.rowArray) {
+        throw new TypeError("no initial row data or row data container provided");
+    }
+
+    if (!options.dtOptions.columns && !this.colCollection && !this.colArray) {
+        throw new TypeError("no initial col data or col data container provided");
+    }
+
+    this.rowStateNodes = {}; // tracks the DOM nodes of the row
     this.dtOptions = options.dtOptions;
     this.dtClasses = options.dtClasses;
-    this.el = options.el;
     this.renderer = options.renderer;
-    this.$el = jQuery(this.el);
     this.$dt = null;
     this.$api = null; // built by render
-    this.render(this.collection);
+    this.render();
 }
 
 
 
 /**
- * Sets the collection for the table and binds event listeners
- * for the table to respond to collection changes
- * @param {Collection} col AmpersandCollection
+ * Initialize passed collections for the table
+ * @param  {Object} collections hash of .rows & .cols props, values of Ampersand-Collection
+ * @return {undefined}
  */
-CollectionDataTable.prototype.setCollection = function(col) {
+CollectionDataTable.prototype.initCollections = function(collections) {
+    var cols, rows;
+    // init collections.cols
+    cols = collections.cols;
+    if (cols) {
+        if (cols.isCollection) {
+            this.colCollection = this.setColCollection(cols);
+        } else if (_.isArray(cols)) {
+            this.colArray = cols;
+        } else {
+            throw new TypeError("Expected cols as AmpersandCollection or Array");
+        }
+    }
+
+    // init collections.rows
+    rows = collections.rows;
+    if (rows) {
+        if (rows.isCollection) {
+            this.rowCollection = this.setRowCollection(rows);
+        } else if (_.isArray(rows)) {
+            this.rowArray = rows;
+        } else {
+            throw new TypeError("Expected rows as AmpersandCollection or Array");
+        }
+    }
+};
+
+
+
+/**
+ * Sets the element and associated meta for the table
+ * @param {Element} el
+ */
+CollectionDataTable.prototype.setEl = function(el) {
+    if (!el) {
+        throw new TypeError("Expected element, received: " + el);
+    }
+    this.el = el;
+    this.$el = jQuery(this.el);
+    this.initOuterHTML = this.el.outerHTML;
+};
+
+
+
+/**
+ * Sets the row collection for the table and binds event listeners
+ * for the table to respond to collection changes
+ * @param {Collection} collection AmpersandCollection
+ */
+CollectionDataTable.prototype.setRowCollection = function(collection) {
     var self = this;
-    this.collection = col;
-    this.collection.on('change', function(m) {
-        self.handleCollectionChange(m);
+    this.rowCollection = collection;
+    this.rowCollection.on('change', function(m) {
+        self.handleRowCollectionChange(m);
     });
-    this.collection.on('add', function(m) {
-        self.handleCollectionAdd(m);
+    this.rowCollection.on('add', function(m) {
+        self.handleRowCollectionAdd(m);
     });
-    this.collection.on('remove', function(m) {
-        self.handleCollectionRemove(m);
+    this.rowCollection.on('remove', function(m) {
+        self.handleRowCollectionRemove(m);
     });
-    return this.collection;
+    return this.rowCollection;
+};
+
+
+/**
+ * Sets a column collection for the table and binds event listeners
+ * for the table to respond to collection changes
+ * @param {Collection} collection AmpersandCollection
+ */
+CollectionDataTable.prototype.setColCollection = function(collection) {
+    var self = this;
+    this.colCollection = collection;
+    this.colCollection.on('add remove', function(m) {
+        if (!self.$api) { return self; }
+        self.$api.destroy();
+        self.el.innerHTML = '';
+        self.render();
+    });
+    return this.colCollection;
 };
 
 /**
@@ -79,36 +164,36 @@ CollectionDataTable.prototype.setCollection = function(col) {
  * @param  {Model} model
  * @return {CollectionDataTable} this
  */
-CollectionDataTable.prototype.handleCollectionAdd = function(model, options) {
+CollectionDataTable.prototype.handleRowCollectionAdd = function(model, options) {
     options = options || {};
     if (!this.$api) { return this; }
-    this.stateNodes[model.cid] = this.$api.row.add(model).node();
+    this.rowStateNodes[model.cid] = this.$api.row.add(model).node();
     if (!options.delayDraw) { this.$api.draw(); }
     return this;
 };
 
-CollectionDataTable.prototype.handleCollectionChange = function(model, options) {
+CollectionDataTable.prototype.handleRowCollectionChange = function(model, options) {
     options = options || {};
     if (!this.$api) { return this; }
-    var node = this.stateNodes[model.cid];
+    var node = this.rowStateNodes[model.cid];
     var $node = jQuery(node);
     var priorClasses = $node.attr("class");
     this.$api
         .row(node)
         .data(model);
         //.draw(); // I don't need to explicity call draw for my cases,
-                 // however, the docs say otherwise
+                 // however, the docs imply it's needed
     this.$el.one('draw.dt', function () {
         $node.attr("class", priorClasses);
     });
     return this;
 };
 
-CollectionDataTable.prototype.handleCollectionRemove = function(model, options) {
+CollectionDataTable.prototype.handleRowCollectionRemove = function(model, options) {
     options = options || {};
     if (!this.$api) { return this; }
-    this.$api.row(this.stateNodes[model.cid]).remove();
-    delete this.stateNodes[model.cid];
+    this.$api.row(this.rowStateNodes[model.cid]).remove();
+    delete this.rowStateNodes[model.cid];
     if (!options.delayDraw) { this.$api.draw(); }
     return this;
 };
@@ -117,28 +202,42 @@ CollectionDataTable.prototype.handleCollectionRemove = function(model, options) 
 
 /**
  * Render/re-draw the the DataTable
- * @param  {Collection} r Ampersand Collection
  * @return {this}
  */
-CollectionDataTable.prototype.render = function (data) {
+CollectionDataTable.prototype.render = function () {
     var self = this,
         addOps = {delayDraw: true},
         initCompleteDelayed, initCompleteArgs,
-        tableOps,
-        state;
+        tableOps, state, cols, data;
 
-    if (data && data.models) {
-        data = data.models;
-    }
 
     // Stage initComplete, and execute it post individual row adds
     if (!this.initCompleteFired && this.dtOptions.initComplete) {
         initCompleteDelayed = this.dtOptions.initComplete;
     }
 
+    // Duplicate table options, prevent input from mutation
     tableOps = _.extend({}, this.dtOptions);
     tableOps.initComplete = function captureInitCompleteArgs() { initCompleteArgs = _.toArray(arguments); };
 
+    // Set table rows
+    if (this.rowCollection) {
+        data = this.rowCollection.models;
+    } else if (this.rowArray) {
+        data = this.rowArray;
+    }
+
+    // Set table cols if specified in the `collections.cols` prop
+    if (this.colCollection) {
+        cols = this.colCollection.models;
+    } else if (this.colArray) {
+        cols = this.colArray;
+    }
+    if (cols) {
+        tableOps.columns = cols;
+    }
+
+    // Style table and render it
     this.$el.addClass(this.dtClasses);
     if (!this.renderer) {
         this.$api = this.$el.DataTable(tableOps);
@@ -151,10 +250,12 @@ CollectionDataTable.prototype.render = function (data) {
     this.$dt = this.$el.dataTable();
 
     // Add all state/models in one-by-one to track their nodes
-    for (var i in data) {
-        if (data.hasOwnProperty(i)) {
-            state = data[i];
-            this.handleCollectionAdd(state, addOps);
+    if (data) {
+        for (var i in data) {
+            if (data.hasOwnProperty(i)) {
+                state = data[i];
+                this.handleRowCollectionAdd(state, addOps);
+            }
         }
     }
     this.$api.draw();

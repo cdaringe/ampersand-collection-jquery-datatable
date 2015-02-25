@@ -2,9 +2,8 @@ var jQuery = window.jQuery = require('jquery'),
     Collection = require('ampersand-collection'),
     Model = require('ampersand-model'),
     TestModel = Model.extend({ props: {a: 'string', b: 'string'} }),
-    CollectionTable = require('../../ampersand-collection-jquery-datatable'),
-    datatables= require('datatables'),
-    domready = require('domready');
+    CollectionTable = require('../ampersand-collection-jquery-datatable'),
+    datatables = require('datatables');
 
 var colDefs = [{title: 'a', data: 'a'}, {title: 'b', name: 'b', data: 'b'}];
 var dummyData = [
@@ -12,7 +11,7 @@ var dummyData = [
     new TestModel({a: 'a2', b: 'b2'})
 ];
 
-domready(function() {
+window.addEventListener('DOMContentLoaded', function() {
     var $myDt = jQuery('#myTable');
     var TestCollection = Collection.extend({
         indexes: ['a', 'b'],
