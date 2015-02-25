@@ -1,4 +1,7 @@
 # ampersand-collection-jquery-datatable
+[ ![Codeship Status for cdaringe/ampersand-collection-jquery-datatable](https://codeship.com/projects/21ed5d70-9f55-0132-8711-02db7f3f2d41/status?branch=master)](https://codeship.com/projects/65128)
+[![browser support](https://ci.testling.com/cdaringe/ampersand-collection-jquery-datatable.png)
+](https://ci.testling.com/cdaringe/ampersand-collection-jquery-datatable.png)
 
 # What
 
