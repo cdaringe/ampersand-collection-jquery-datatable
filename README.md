@@ -19,7 +19,7 @@ How refreshing.
 * You should already have the DataTables plugin loaded onto jQuery
 
 ## Process
-Feel free to take a peek at the `examples/dynamic-rows.js` && `examples/dynamic-rows.html` files.  To demo it, run `npm run demo`, open the browser to the posted URL, and stuffix `/dynamic-rows.html` to the end.  This is non-interactive, but at least you can see the output of the .js code :) .
+Feel free to take a peek at the `examples/dynamic-rows.js` && `examples/dynamic-rows.html` files.  To demo it, run `npm run demo`, open the browser to the posted URL, and suffix `/dynamic-rows.html` to the end.  This is a non-interactive page, but at least you can see the output of the .js code, and even modify the js and refresh to experiment :) !
 
 The process is generally:
 
