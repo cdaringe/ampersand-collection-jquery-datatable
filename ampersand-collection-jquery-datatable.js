@@ -33,7 +33,7 @@ function CollectionDataTable (options) {
     if (!options || !_.isObject(options)) {
         throw new TypeError("Expected options object, received " + options);
     }
-    options.dtOptions = options.dtOptions || {};
+    this.dtOptions = options.dtOptions || {};
 
     if (options.jquery) {
         // permit user to override default jquery with their own
@@ -53,16 +53,15 @@ function CollectionDataTable (options) {
 
     if (options.collections) { this.initCollections(options.collections); }
 
-    if (!options.dtOptions.data && !this.rowCollection && !this.rowArray) {
+    if (!this.dtOptions.data && !this.rowCollection && !this.rowArray) {
         throw new TypeError("no initial row data or row data container provided");
     }
 
-    if (!options.dtOptions.columns && !this.colCollection && !this.colArray) {
+    if (!this.dtOptions.columns && !this.colCollection && !this.colArray) {
         throw new TypeError("no initial col data or col data container provided");
     }
 
     this.rowStateNodes = {}; // tracks the DOM nodes of the row
-    this.dtOptions = options.dtOptions;
     this.dtClasses = options.dtClasses;
     this.renderer = options.renderer;
     this.$dt = null;

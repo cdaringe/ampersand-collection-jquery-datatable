@@ -121,6 +121,7 @@ domready(function() {
 1. To run the tests, if initial run results in an error that complains about phantom/*, see [this](https://github.com/AmpersandJS/ampersand-collection-view/issues/13#issuecomment-51083095)
 
 # Changelog
+* 1.3.1-3 - README updates and remove self-assign from `options.dtOptions` (all pass in of read-only `.dtOptions`)
 * 1.3.0 - add dynamic columns, tests, and sandbox
 * 1.2.3 - add missing repo field
 * 1.2.2 - Carry applied `classes` from old `tr` to new `tr` onchange.  Additional attrs may need consideration as well
