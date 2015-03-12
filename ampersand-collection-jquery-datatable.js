@@ -167,7 +167,7 @@ CollectionDataTable.prototype.handleRowCollectionAdd = function(model, options) 
     options = options || {};
     if (!this.$api) { return this; }
     this.rowStateNodes[model.cid] = this.$api.row.add(model).node();
-    if (!options.delayDraw) { this.$api.draw(); }
+    if (!options.delayDraw) { this.$api.draw(false); }
     return this;
 };
 
@@ -190,12 +190,12 @@ CollectionDataTable.prototype.handleRowCollectionChange = function(model, option
                 return data === model;
             })
             .invalidate()
-            .draw();
+            .draw(false);
     } else {
         this.$api
             .row(node)
             .invalidate()
-            .draw();
+            .draw(false);
     }
 
     if (node) {
@@ -220,7 +220,7 @@ CollectionDataTable.prototype.handleRowCollectionRemove = function(model, option
         this.$api.row(this.rowStateNodes[model.cid]).remove();
     }
     delete this.rowStateNodes[model.cid];
-    if (!options.delayDraw) { this.$api.draw(); }
+    if (!options.delayDraw) { this.$api.draw(false); }
     return this;
 };
 
