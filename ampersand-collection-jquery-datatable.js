@@ -128,14 +128,14 @@ CollectionDataTable.prototype.setEl = function(el) {
 CollectionDataTable.prototype.setRowCollection = function(collection) {
     var self = this;
     this.rowCollection = collection;
-    this.rowCollection.on('change', function(m) {
-        self.handleRowCollectionChange(m);
+    this.rowCollection.on('change', function(m, coll, mode) {
+        self.handleRowCollectionChange(m, coll, mode);
     });
-    this.rowCollection.on('add', function(m) {
-        self.handleRowCollectionAdd(m);
+    this.rowCollection.on('add', function(m, coll, mode) {
+        self.handleRowCollectionAdd(m, coll, mode);
     });
-    this.rowCollection.on('remove', function(m) {
-        self.handleRowCollectionRemove(m);
+    this.rowCollection.on('remove', function(m, coll, mode) {
+        self.handleRowCollectionRemove(m, coll, mode);
     });
     return this.rowCollection;
 };
@@ -174,24 +174,51 @@ CollectionDataTable.prototype.handleRowCollectionAdd = function(model, options) 
 CollectionDataTable.prototype.handleRowCollectionChange = function(model, options) {
     options = options || {};
     if (!this.$api) { return this; }
-    var node = this.rowStateNodes[model.cid];
-    var $node = jQuery(node);
-    var priorClasses = $node.attr("class");
-    this.$api
-        .row(node)
-        .data(model);
-        //.draw(); // I don't need to explicity call draw for my cases,
-                 // however, the docs imply it's needed
-    this.$el.one('draw.dt', function () {
-        $node.attr("class", priorClasses);
-    });
+    var node = this.dtOptions.deferRender ? options.node : this.rowStateNodes[model.cid];
+    var $node;
+    var priorClasses;
+    if (node) {
+        $node = jQuery(node);
+        priorClasses = $node.attr("class");
+    }
+
+    // allow data to be re-drawn, regardless if the node is generated or not
+    if (this.dtOptions.deferRender) {
+        // significantly slower in large datasets
+        this.$api
+            .row(function(idx, data, node) {
+                return data === model;
+            })
+            .invalidate()
+            .draw();
+    } else {
+        this.$api
+            .row(node)
+            .invalidate()
+            .draw();
+    }
+
+    if (node) {
+        // restore prior class styling
+        this.$el.one('draw.dt', function () {
+            $node.attr("class", priorClasses);
+        });
+    }
     return this;
 };
 
 CollectionDataTable.prototype.handleRowCollectionRemove = function(model, options) {
     options = options || {};
     if (!this.$api) { return this; }
-    this.$api.row(this.rowStateNodes[model.cid]).remove();
+    // remove row.  if deferRender is on, search through table to find row
+    // otherwise, we know the exact node to delete
+    if (this.dtOptions.deferRender) {
+        this.$api.row(function(idx, data, node) {
+            return data === model;
+        }).remove();
+    } else {
+        this.$api.row(this.rowStateNodes[model.cid]).remove();
+    }
     delete this.rowStateNodes[model.cid];
     if (!options.delayDraw) { this.$api.draw(); }
     return this;

@@ -117,10 +117,12 @@ domready(function() {
 
 1. **Adding and deleting columns completely destroys the dataTable and rebuilds it**.  Dynamic columns is not officially supported by DataTables, so I scrap and rebuild it as there is no other way at the time of writing.  Be careful adding/deleting many cols with large datasets.  PRs are in work @DataTables for this.
 1. Using the `init.dt` event and `initComplete` options may yield unexpected behavior.  Post-initialization an *empty table is drawn*.  CollectionTable then immediately adds row data, and re-draws.  Your defined `initComplete` is executed then.  The `init.dt` (or similair) event is not rethrown.  PRs are welcome in this regard.
+1. Using `deferRender` in `dtOptions` prevents `CollectionTable.stateNodes` from storing valid DOM nodes, as DOM nodes aren't built immediately!
 1. If you are changing your models often or in bulk, you may want a mitigation strategy as it attempts to redraw on every add/delete, with some minor exceptions.
 1. To run the tests, if initial run results in an error that complains about phantom/*, see [this](https://github.com/AmpersandJS/ampersand-collection-view/issues/13#issuecomment-51083095)
 
 # Changelog
+* 1.3.4 - if DT `deferRender` is activated, still be able to locate data to update, regardless if a DOM node is built or not. (handle no node in `cid` store)
 * 1.3.1-3 - README updates and remove self-assign from `options.dtOptions` (all pass in of read-only `.dtOptions`)
 * 1.3.0 - add dynamic columns, tests, and sandbox
 * 1.2.3 - add missing repo field
