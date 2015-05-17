@@ -12,7 +12,9 @@
   "author": "cdaringe",
   "license": "MIT",
   "dependencies": {
-    "underscore": "*"
+    "jquery": "*",
+    "datatables": "*",
+    "lodash": "*"
   },
   "devDependencies": {
     "ampersand-collection": "^1.4.0",
@@ -20,9 +22,7 @@
     "ampersand-state": "^4.4.4",
     "beefy": "*",
     "browserify": "*",
-    "datatables": "1.10.5",
     "domready": "^1.0.7",
-    "jquery": "*",
     "js-beautify": "^1.5.4",
     "phantomjs": "*",
     "pre-commit": "^1.0.5",

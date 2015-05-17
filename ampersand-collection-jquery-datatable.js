@@ -7,8 +7,14 @@
 (function initAmpersandCollectionJqueryDatatable(undefined) {
 "use strict";
 
-var _ = require('underscore');
-var jQuery = window.jQuery;
+var jQuery = require('jquery');
+require('datatables');
+var isObject = require('lodash/lang/isObject');
+var isArray = require('lodash/lang/isArray');
+var extend = require('lodash/object/extend');
+var toArray = require('lodash/lang/toArray');
+
+
 /**
  * Constructor
  * @param  {options} object {
@@ -30,7 +36,7 @@ var jQuery = window.jQuery;
  */
 function CollectionDataTable (options) {
     var self = this;
-    if (!options || !_.isObject(options)) {
+    if (!options || !isObject(options)) {
         throw new TypeError("Expected options object, received " + options);
     }
     this.dtOptions = options.dtOptions || {};
@@ -83,7 +89,7 @@ CollectionDataTable.prototype.initCollections = function(collections) {
     if (cols) {
         if (cols.isCollection) {
             this.colCollection = this.setColCollection(cols);
-        } else if (_.isArray(cols)) {
+        } else if (isArray(cols)) {
             this.colArray = cols;
         } else {
             throw new TypeError("Expected cols as AmpersandCollection or Array");
@@ -95,7 +101,7 @@ CollectionDataTable.prototype.initCollections = function(collections) {
     if (rows) {
         if (rows.isCollection) {
             this.rowCollection = this.setRowCollection(rows);
-        } else if (_.isArray(rows)) {
+        } else if (isArray(rows)) {
             this.rowArray = rows;
         } else {
             throw new TypeError("Expected rows as AmpersandCollection or Array");
@@ -243,8 +249,8 @@ CollectionDataTable.prototype.render = function () {
     }
 
     // Duplicate table options, prevent input from mutation
-    tableOps = _.extend({}, this.dtOptions);
-    tableOps.initComplete = function captureInitCompleteArgs() { initCompleteArgs = _.toArray(arguments); };
+    tableOps = extend({}, this.dtOptions);
+    tableOps.initComplete = function captureInitCompleteArgs() { initCompleteArgs = toArray(arguments); };
 
     // Set table rows
     if (this.rowCollection) {

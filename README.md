@@ -5,34 +5,36 @@
 
 # What
 
-* You use [ampersand.js](https://ampersandjs.com/).
+* You use [ampersand.js](https://ampersandjs.com/) (or [backbone.js](http://backbonejs.org/)).
 * You use [jQuery DataTables](https://datatables.net/).
-* You have an [ampersand collection](https://github.com/AmpersandJS/ampersand-collection) that you want to render in a DataTable.
+* You have an [collection](https://github.com/AmpersandJS/ampersand-collection) that you want to render in a DataTable.
 * You want your dataTable to respond to collection events (i.e. `add`, `remove`, `update`), and be displayed immediately, without having to get into the dataTable API on your own.  This library updates DataTable rows and columns as their corresponding collections change.  However, you are technically not required to use collections for either.
 
 How refreshing.
 
-# How
-
-## Pre-conditions
-* You should already have jQuery on the window or in your dependencies
-* You should already have the DataTables plugin loaded onto jQuery
-
-## Process
-Feel free to take a peek at the `examples/dynamic-rows.js` && `examples/dynamic-rows.html` files.  To demo it, run `npm run demo`, open the browser to the posted URL, and suffix `/dynamic-rows.html` to the end.  This is a non-interactive page, but at least you can see the output of the .js code, and even modify the js and refresh to experiment :) !
-
-The process is generally:
-
-1. Generate a config object, e.g. `var config = {};`
-1. Set an `el` property, where `config.el = raw_DOM_node_for_table;`  e.g `config.el = window.document.getElementById('my_table')`;
-1. Set a `collection` property, where the value is some type of `ampersand-collection`.  This assumes your collection is for row data.
-    1. Alternatively, set `collections: { rows: yourRowCollectionOrArray, cols: yourColCollectionOrArray }`
-1. Add any table options that you would normally use for the DataTable to `.dtOptions`
-1. Add any styles you would like to add to the table element to `.dtClasses` e.g. `display compact`
-1. `var CollectionTable = require('ampersand-collection-jquery-datatable')` (sorry for the long name!), and construct via `var myCollDataTable = new CollectionTable(config)`
-1. To see other options, **check the contructor DocBlock**.  The latest should always be maintained here:
+## Usage
 
 ```js
+var CollectionTable = require('ampersand-collection-jquery-datatable'); // long name :)
+// Generate a config of the following form:
+var config = {
+    el: raw_DOM_node_for_table, // e.g. this.queryByHook('my-table')
+    collection: myCollection, // OR ...
+    dtOptions: {
+        // datatable constructor options
+    },
+    dtClasses: 'display compact' // sugar for adding some styles
+};
+
+...
+    // inside a view
+    render: function() {
+        var myCollDataTable = new CollectionTable(config)
+    }
+...
+```
+
+To see other options, **check the contructor DocBlock**.  The latest should always be maintained here, too:
 /**
  * Constructor
  * @param  {options} object {
@@ -40,7 +42,7 @@ The process is generally:
  *     collections: {
  *         rows: {AmpersandCollection|Array},
  *         cols: {AmpersandCollection|Array}  // overrides dtOptions.columns. Contained
- *                                            // states should have .title, and likely a .data & .id
+ *                                            // states should have .title, .data, & .id attr
  *     }
  *     el: {Element},           // dataTable target
  *     dtOptions: {Object},     // dataTable config.  Set the `data` (rows) and `columns` props as reqd
@@ -54,9 +56,10 @@ The process is generally:
  */
 ```
 
-## Additional Features
+## api
 
-* `.stateNodes` - Access the row DOM node for you state/model by peeking at `yourCollectionTable.stateNodes[yourModel.cid]`
+##### attrs
+- `stateNodes` - Access the row DOM node for you state/model by peeking at `yourCollectionTable.stateNodes[yourModel.cid]`
 
 
 # Full Example
@@ -116,12 +119,12 @@ domready(function() {
 # Edge Cases and Warnings
 
 1. **Adding and deleting columns completely destroys the dataTable and rebuilds it**.  Dynamic columns is not officially supported by DataTables, so I scrap and rebuild it as there is no other way at the time of writing.  Be careful adding/deleting many cols with large datasets.  PRs are in work @DataTables for this.
-1. Using the `init.dt` event and `initComplete` options may yield unexpected behavior.  Post-initialization an *empty table is drawn*.  CollectionTable then immediately adds row data, and re-draws.  Your defined `initComplete` is executed then.  The `init.dt` (or similair) event is not rethrown.  PRs are welcome in this regard.
+1. Using the `init.dt` event and `initComplete` options may yield unexpected behavior.  Post-initialization of a ACJD, an *empty table is drawn*.  CollectionTable then immediately adds row data, and re-draws.  Your defined `initComplete` is executed then.  The `init.dt` (or similair) event is not rethrown.  PRs are welcome in this regard.
 1. Using `deferRender` in `dtOptions` prevents `CollectionTable.stateNodes` from storing valid DOM nodes, as DOM nodes aren't built immediately!
-1. If you are changing your models often or in bulk, you may want a mitigation strategy as it attempts to redraw on every add/delete, with some minor exceptions.
 1. To run the tests, if initial run results in an error that complains about phantom/*, see [this](https://github.com/AmpersandJS/ampersand-collection-view/issues/13#issuecomment-51083095)
 
 # Changelog
+* 2.0.0 - moved datatables and jquery to package.json dependencies. use `global.jQuery` in bundle (see [npm's guide to using jQuery plugins with a bundler](http://blog.npmjs.org/post/112064849860/using-jquery-plugins-with-npm))
 * 1.3.5 - bugfix: do standing draw on update (change), not reset draw
 * 1.3.4 - if DT `deferRender` is activated, still be able to locate data to update, regardless if a DOM node is built or not. (handle no node in `cid` store)
 * 1.3.1-3 - README updates and remove self-assign from `options.dtOptions` (all pass in of read-only `.dtOptions`)
