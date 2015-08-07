@@ -53,7 +53,7 @@ test('basic table', function (t) {
         }
     });
     t.equal(myTable.querySelector('th').textContent, "ABC's", 'should have matching title with th');
-    t.equal(cdt.$api.row()[0].length, rowCollection.length, "should have same number of table nodes as data nodes ");
+    t.equal(cdt.$api.rows()[0].length, rowCollection.length, "should have same number of table nodes as data nodes ");
     t.end();
 });
 
@@ -74,7 +74,7 @@ test('multi-col table', function (t) {
     });
     t.equal(jQuery(myTable).find('th')[1].textContent, "BFC's", 'should have matching title with 2nd col');
     t.equal(myTable.querySelectorAll('th').length, 2, "should have same number of th's as titles");
-    t.equal(cdt.$api.cell()[0].length, 2 * rowCollection.length, "should have same number of td's as data nodes (2 col * rows)");
+    t.equal(cdt.$api.cells()[0].length, 2 * rowCollection.length, "should have same number of td's as data nodes (2 col * rows)");
     t.end();
 });
 
@@ -93,12 +93,12 @@ test('add/delete a collection item', function (t) {
             ]
         }
     });
-    beforeRows = cdt.$api.row()[0].length;
+    beforeRows = cdt.$api.rows()[0].length;
     rowCollection.add(dummyItem);
-    afterRows = cdt.$api.row()[0].length;
+    afterRows = cdt.$api.rows()[0].length;
     t.equal(beforeRows + 1, afterRows, 'should add an extra row when adding data to collection');
     rowCollection.remove('one extra');
-    afterRows = cdt.$api.row()[0].length;
+    afterRows = cdt.$api.rows()[0].length;
     t.equal(beforeRows, afterRows, 'should remove a row when removing data from the collection');
     t.end();
 });

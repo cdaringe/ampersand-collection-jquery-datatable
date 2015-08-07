@@ -279,7 +279,7 @@ CollectionDataTable.prototype.render = function () {
             throw new Error('renderer did not provide a DataTable instance');
         }
     }
-    this.$dt = this.$el.dataTable();
+    this.$dt = this.$el;
 
     // Add all state/models in one-by-one to track their nodes
     if (data) {

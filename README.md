@@ -124,7 +124,7 @@ domready(function() {
 1. To run the tests, if initial run results in an error that complains about phantom/*, see [this](https://github.com/AmpersandJS/ampersand-collection-view/issues/13#issuecomment-51083095)
 
 # Changelog
-* 2.0.0 - moved datatables and jquery to package.json dependencies. use `global.jQuery` in bundle (see [npm's guide to using jQuery plugins with a bundler](http://blog.npmjs.org/post/112064849860/using-jquery-plugins-with-npm))
+* 2.0.0 - moved datatables and jquery to package.json dependencies. support DT 1.10.7.
 * 1.3.5 - bugfix: do standing draw on update (change), not reset draw
 * 1.3.4 - if DT `deferRender` is activated, still be able to locate data to update, regardless if a DOM node is built or not. (handle no node in `cid` store)
 * 1.3.1-3 - README updates and remove self-assign from `options.dtOptions` (all pass in of read-only `.dtOptions`)
