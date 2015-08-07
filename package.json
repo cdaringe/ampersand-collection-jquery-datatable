@@ -1,6 +1,6 @@
 {
   "name": "ampersand-collection-jquery-datatable",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Renders ampersand-collections via jQuery DataTables",
   "main": "ampersand-collection-jquery-datatable.js",
   "scripts": {
@@ -12,9 +12,11 @@
   "author": "cdaringe",
   "license": "MIT",
   "dependencies": {
-    "jquery": "*",
     "datatables": "*",
-    "lodash": "*"
+    "jquery": "*",
+    "lodash.assign": "^3.2.0",
+    "lodash.isarray": "^3.0.4",
+    "lodash.toarray": "^3.0.2"
   },
   "devDependencies": {
     "ampersand-collection": "^1.4.0",

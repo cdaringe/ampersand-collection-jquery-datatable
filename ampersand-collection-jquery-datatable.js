@@ -10,9 +10,9 @@
 var jQuery = require('jquery');
 require('datatables');
 var isObject = require('lodash/lang/isObject');
-var isArray = require('lodash/lang/isArray');
-var extend = require('lodash/object/extend');
-var toArray = require('lodash/lang/toArray');
+var isArray = require('lodash.isarray');
+var extend = require('lodash.assign');
+var toArray = require('lodash.toarray');
 
 
 /**
