@@ -8,7 +8,7 @@
 * You use [ampersand.js](https://ampersandjs.com/) (or [backbone.js](http://backbonejs.org/)).
 * You use [jQuery DataTables](https://datatables.net/).
 * You have an [collection](https://github.com/AmpersandJS/ampersand-collection) that you want to render in a DataTable.
-* You want your dataTable to respond to collection events (i.e. `add`, `remove`, `update`), and be displayed immediately, without having to get into the dataTable API on your own.  This library updates DataTable rows and columns as their corresponding collections change.  However, you are technically not required to use collections for either.
+* You want your dataTable to respond to collection events (i.e. `add`, `remove`, `update`), and be displayed immediately, without having to get into the dataTable API on your own.  This library updates DataTable rows and columns as their corresponding collections change.  However, you are technically not required to use collections for either (rows/columns), and instead may use arrays.
 
 How refreshing.
 
@@ -35,6 +35,8 @@ var config = {
 ```
 
 To see other options, **check the contructor DocBlock**.  The latest should always be maintained here, too:
+
+```js
 /**
  * Constructor
  * @param  {options} object {
@@ -63,6 +65,7 @@ To see other options, **check the contructor DocBlock**.  The latest should alwa
 
 
 # Full Example
+
 ```js
 var jQuery = window.jQuery = require('jquery'),
     Collection = require('ampersand-collection'),
@@ -124,6 +127,7 @@ domready(function() {
 1. To run the tests, if initial run results in an error that complains about phantom/*, see [this](https://github.com/AmpersandJS/ampersand-collection-view/issues/13#issuecomment-51083095)
 
 # Changelog
+* 2.0.2 - patch README
 * 2.0.1 - reduce payload by including micro-lodash deps
 * 2.0.0 - moved datatables and jquery to package.json dependencies. support DT 1.10.7.
 * 1.3.5 - bugfix: do standing draw on update (change), not reset draw
