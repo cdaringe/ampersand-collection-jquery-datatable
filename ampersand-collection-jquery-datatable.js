@@ -134,6 +134,9 @@ CollectionDataTable.prototype.setEl = function(el) {
 CollectionDataTable.prototype.setRowCollection = function(collection) {
     var self = this;
     this.rowCollection = collection;
+    this.rowCollection.on('reset', function(coll, opts) {
+        self.handleCollectionReset(coll, opts)
+    });
     this.rowCollection.on('change', function(m, coll, mode) {
         self.handleRowCollectionChange(m, coll, mode);
     });
@@ -230,7 +233,21 @@ CollectionDataTable.prototype.handleRowCollectionRemove = function(model, option
     return this;
 };
 
+CollectionDataTable.prototype.handleCollectionReset = function (collection, options) {
+    if (!this.$api) { return this; }
+    var data = collection.models;
 
+    this.$api.rows().remove();
+
+    if (data) {
+        for (var i in data) {
+            if (data.hasOwnProperty(i)) {
+                this.handleRowCollectionAdd(data[i], {delayDraw: true});
+            }
+        }
+    }
+    this.$api.draw();
+};
 
 /**
  * Render/re-draw the the DataTable
