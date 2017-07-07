@@ -20,7 +20,8 @@
     "jquery": "*",
     "lodash.assign": "^3.2.0",
     "lodash.isarray": "^3.0.4",
-    "lodash.toarray": "^3.0.2"
+    "lodash.toarray": "^3.0.2",
+    "lodash.isobject": "^3.0.2"
   },
   "devDependencies": {
     "ampersand-collection": "^1.4.0",

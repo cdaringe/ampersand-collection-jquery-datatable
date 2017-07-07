@@ -127,6 +127,7 @@ domready(function() {
 1. To run the tests, if initial run results in an error that complains about phantom/*, see [this](https://github.com/AmpersandJS/ampersand-collection-view/issues/13#issuecomment-51083095)
 
 # Changelog
+* 2.1.0 - Module now listens to `reset` event from collection as well and re-draws datatable with new data.
 * 2.0.2 - patch README
 * 2.0.1 - reduce payload by including micro-lodash deps
 * 2.0.0 - moved datatables and jquery to package.json dependencies. support DT 1.10.7.
